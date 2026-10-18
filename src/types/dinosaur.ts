@@ -35,4 +35,6 @@ export interface Dinosaur {
     kidHeightMultiplier: number; // e.g. 5 means 5 kids stacked high
     busLengthPercent: number; // e.g. 120 means 1.2 school buses long
   };
+  /** Short, careful note about scales or feathers for this species. */
+  skinNote: string;
 }

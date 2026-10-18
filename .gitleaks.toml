@@ -1,0 +1,13 @@
+title = "dino-safari gitleaks allowlist"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Vendored decoder binaries, CC0 meshes, and the pinned gitleaks tarball are not secrets."
+paths = [
+  '''tools/gitleaks/gitleaks_8\.30\.1_linux_x64\.tar\.gz''',
+  '''public/decoders/.*''',
+  '''public/models/.*''',
+  '''package-lock\.json''',
+]

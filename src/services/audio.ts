@@ -106,7 +106,7 @@ class DinoAudioService {
         // Brachiosaurus / Diplodocus: Gentle, deep whale-like trumpet call
         this.synthesizeSauropodCall(ctx, now);
       } else if (soundType === 'screech') {
-        // Velociraptor: High-pitch chirping hunter bark
+        // High, short call
         this.synthesizeRaptorScreech(ctx, now);
       } else if (soundType === 'bellow') {
         // Triceratops / Ankylosaurus: Heavy chest bellow resonance
