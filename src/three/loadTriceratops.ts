@@ -5,12 +5,6 @@ import assetManifest from '../data/asset-manifest.json';
 
 export const TARGET_LENGTH = 4.4;
 
-/**
- * Smithsonian Voyager stores this scan Z-up. A −90° turn about X lays the
- * body along the ground before we measure it. Y stays up in the scene.
- */
-export const SKELETON_X_ROTATION = -Math.PI / 2;
-
 function seatOnPedestal(root: THREE.Object3D, targetLength: number) {
   root.traverse((obj) => {
     const mesh = obj as THREE.Mesh;
@@ -23,7 +17,7 @@ function seatOnPedestal(root: THREE.Object3D, targetLength: number) {
   root.updateMatrixWorld(true);
   const box = new THREE.Box3().setFromObject(root);
   const size = box.getSize(new THREE.Vector3());
-  // After the skeleton is turned upright, length runs along X or Z, not Y.
+  // Y is up. Body length is the longer horizontal axis, X or Z.
   const length = Math.max(size.x, size.z, 0.001);
   root.scale.multiplyScalar(targetLength / length);
 
@@ -57,7 +51,9 @@ export async function loadTriceratops(loader: GLTFLoader): Promise<DinoModelResu
   rootGroup.add(exteriorGroup, skeletonGroup);
 
   seatOnPedestal(skinGltf.scene, TARGET_LENGTH);
-  skeletonGltf.scene.rotation.x = SKELETON_X_ROTATION;
+  // The scan's back is +X and its skull is -Y. ZYX order turns the back up
+  // and the skull toward +Z, the same way the living skin faces.
+  skeletonGltf.scene.rotation.set(-Math.PI / 2, 0, Math.PI / 2, 'ZYX');
   seatOnPedestal(skeletonGltf.scene, TARGET_LENGTH);
   exteriorGroup.add(skinGltf.scene);
   skeletonGroup.add(skeletonGltf.scene);
