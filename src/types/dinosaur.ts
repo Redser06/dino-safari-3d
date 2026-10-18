@@ -1,6 +1,6 @@
 export type DietType = 'carnivore' | 'herbivore' | 'piscivore';
 
-export type DinoViewMode = 'exterior' | 'skeleton' | 'xray';
+export type DinoViewMode = 'exterior' | 'skeleton';
 
 export interface DinoSuperpower {
   title: string;

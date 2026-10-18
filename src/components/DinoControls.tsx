@@ -30,51 +30,38 @@ export const DinoControls: React.FC<DinoControlsProps> = ({
 
   return (
     <div className="flex flex-col gap-3 w-full">
-      {/* 1. Big Skin vs Bones vs X-Ray Mode Switcher */}
+      {/* 1. Living Reptilian Skin vs Museum Fossil Skeleton Switcher */}
       <div className="bg-white p-2 sm:p-2.5 rounded-3xl border-3 border-safari-300 shadow-playful flex flex-col sm:flex-row items-center justify-between gap-2">
         <div className="text-xs sm:text-sm font-bold text-safari-800 px-2 flex items-center gap-1.5 self-start sm:self-center">
           <Sparkles className="w-4 h-4 text-amber-500" />
-          <span>Body Mode:</span>
+          <span>3D Anatomy Mode:</span>
         </div>
 
-        <div className="grid grid-cols-3 gap-1.5 sm:gap-2 w-full sm:w-auto">
+        <div className="grid grid-cols-2 gap-2 w-full sm:w-auto">
           {/* Exterior Mode */}
           <button
             onClick={() => handleModeChange('exterior')}
-            className={`btn-chunky flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2 sm:py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold border-2 ${
+            className={`btn-chunky flex items-center justify-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 rounded-2xl text-xs sm:text-sm font-extrabold border-2 ${
               viewMode === 'exterior'
-                ? 'bg-jungle-500 text-white border-jungle-700 shadow-playful-sm scale-[1.02]'
+                ? 'bg-jungle-600 text-white border-jungle-800 shadow-playful-sm scale-[1.02]'
                 : 'bg-safari-100 text-safari-800 border-safari-300 hover:bg-safari-200'
             }`}
           >
             <span className="text-base sm:text-lg">🦖</span>
-            <span>Living Skin</span>
+            <span>Living Reptilian Skin</span>
           </button>
 
           {/* Skeleton Mode */}
           <button
             onClick={() => handleModeChange('skeleton')}
-            className={`btn-chunky flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2 sm:py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold border-2 ${
+            className={`btn-chunky flex items-center justify-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 rounded-2xl text-xs sm:text-sm font-extrabold border-2 ${
               viewMode === 'skeleton'
                 ? 'bg-amber-500 text-white border-amber-700 shadow-playful-sm scale-[1.02]'
                 : 'bg-bone-100 text-amber-900 border-bone-300 hover:bg-bone-200'
             }`}
           >
             <span className="text-base sm:text-lg">🦴</span>
-            <span>Skeleton</span>
-          </button>
-
-          {/* X-Ray Inside Mode */}
-          <button
-            onClick={() => handleModeChange('xray')}
-            className={`btn-chunky flex items-center justify-center gap-1.5 px-3 sm:px-4 py-2 sm:py-2.5 rounded-2xl text-xs sm:text-sm font-extrabold border-2 ${
-              viewMode === 'xray'
-                ? 'bg-sky-500 text-white border-sky-700 shadow-playful-sm scale-[1.02]'
-                : 'bg-safari-100 text-safari-800 border-safari-300 hover:bg-safari-200'
-            }`}
-          >
-            <span className="text-base sm:text-lg">🔍</span>
-            <span>X-Ray</span>
+            <span>Fossil Skeleton</span>
           </button>
         </div>
       </div>
