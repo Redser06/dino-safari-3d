@@ -27,11 +27,11 @@ export const DINOSAURS: Dinosaur[] = [
     },
     soundType: 'deep-roar',
     colorTheme: {
-      accent: '#E07A5F',
-      skinTone: 'Lizard Forest Green & Earth Clay',
-      modelSkinColor: 0x475e3e,
-      modelUnderbellyColor: 0xd4ba88,
-      modelPatternColor: 0x2b3824
+      accent: '#C86446',
+      skinTone: 'Weathered Olive-Bronze & Charcoal Hide',
+      modelSkinColor: 0x52593e,
+      modelUnderbellyColor: 0xcdc0a2,
+      modelPatternColor: 0x2a2f20
     },
     sizeComparison: {
       kidHeightMultiplier: 4,
@@ -64,11 +64,11 @@ export const DINOSAURS: Dinosaur[] = [
     },
     soundType: 'sauropod-call',
     colorTheme: {
-      accent: '#2E7D32',
-      skinTone: 'Deep Canopy Olive & Slate Grey',
-      modelSkinColor: 0x586950,
-      modelUnderbellyColor: 0xdfd7c2,
-      modelPatternColor: 0x3d4b38
+      accent: '#3D6B48',
+      skinTone: 'Elephantine Canopy Olive & Lichen Slate',
+      modelSkinColor: 0x5b634f,
+      modelUnderbellyColor: 0xd4c9b0,
+      modelPatternColor: 0x353b2c
     },
     sizeComparison: {
       kidHeightMultiplier: 12,
@@ -101,11 +101,11 @@ export const DINOSAURS: Dinosaur[] = [
     },
     soundType: 'sauropod-call',
     colorTheme: {
-      accent: '#0D9488',
-      skinTone: 'Moss Bronze & River Clay',
-      modelSkinColor: 0x5a6351,
-      modelUnderbellyColor: 0xd9ceb5,
-      modelPatternColor: 0x3d4734
+      accent: '#4D6B53',
+      skinTone: 'Riverbed Bronze-Umber & Moss Taupe',
+      modelSkinColor: 0x645a47,
+      modelUnderbellyColor: 0xd4c5a8,
+      modelPatternColor: 0x383225
     },
     sizeComparison: {
       kidHeightMultiplier: 4.5,
@@ -138,11 +138,11 @@ export const DINOSAURS: Dinosaur[] = [
     },
     soundType: 'bellow',
     colorTheme: {
-      accent: '#D97706',
-      skinTone: 'Terracotta Ochre & Armored Brown',
-      modelSkinColor: 0x825a38,
-      modelUnderbellyColor: 0xe6cead,
-      modelPatternColor: 0x52361e
+      accent: '#B46535',
+      skinTone: 'Earthy Sienna-Ochre & Weathered Umber',
+      modelSkinColor: 0x6f553e,
+      modelUnderbellyColor: 0xd6c3a5,
+      modelPatternColor: 0x3d2a1b
     },
     sizeComparison: {
       kidHeightMultiplier: 3,
@@ -175,11 +175,11 @@ export const DINOSAURS: Dinosaur[] = [
     },
     soundType: 'growl',
     colorTheme: {
-      accent: '#EA580C',
-      skinTone: 'Amber Earth & Crimson Plated Spines',
-      modelSkinColor: 0x6e5b44,
-      modelUnderbellyColor: 0xd9c5a3,
-      modelPatternColor: 0x9e3820
+      accent: '#B85435',
+      skinTone: 'Walnut Earth & Keratinous Terracotta Plates',
+      modelSkinColor: 0x665640,
+      modelUnderbellyColor: 0xd2c0a0,
+      modelPatternColor: 0x733824
     },
     sizeComparison: {
       kidHeightMultiplier: 4,
@@ -212,11 +212,11 @@ export const DINOSAURS: Dinosaur[] = [
     },
     soundType: 'screech',
     colorTheme: {
-      accent: '#059669',
-      skinTone: 'Desert Sand & Striped Reptilian Hunter',
-      modelSkinColor: 0x6e7d4d,
-      modelUnderbellyColor: 0xe6dab8,
-      modelPatternColor: 0x47392b
+      accent: '#7D633A',
+      skinTone: 'Gobi Desert Ochre & Monitor-Lizard Stripes',
+      modelSkinColor: 0x736244,
+      modelUnderbellyColor: 0xd9c8a9,
+      modelPatternColor: 0x382a1c
     },
     sizeComparison: {
       kidHeightMultiplier: 0.8,
@@ -251,9 +251,9 @@ export const DINOSAURS: Dinosaur[] = [
     colorTheme: {
       accent: '#78716C',
       skinTone: 'Bronze Stone & Spiked Carapace',
-      modelSkinColor: 0x5e564d,
-      modelUnderbellyColor: 0xd4c2a5,
-      modelPatternColor: 0x3d352e
+      modelSkinColor: 0x5d554b,
+      modelUnderbellyColor: 0xd2c2a8,
+      modelPatternColor: 0x38322b
     },
     sizeComparison: {
       kidHeightMultiplier: 1.7,
@@ -286,11 +286,11 @@ export const DINOSAURS: Dinosaur[] = [
     },
     soundType: 'deep-roar',
     colorTheme: {
-      accent: '#0284C7',
-      skinTone: 'River Teal & Striped Sail Scales',
-      modelSkinColor: 0x416866,
-      modelUnderbellyColor: 0xd9e5d9,
-      modelPatternColor: 0x223d3c
+      accent: '#4F6D5A',
+      skinTone: 'Nile-Crocodile Olive & River-Slate Sail',
+      modelSkinColor: 0x525b44,
+      modelUnderbellyColor: 0xd1c5a8,
+      modelPatternColor: 0x2e3524
     },
     sizeComparison: {
       kidHeightMultiplier: 5,

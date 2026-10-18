@@ -159,6 +159,9 @@ interface AnatomicalDinoBlueprint {
   dorsalRidge?: number;
   lateralKeel?: number;
   sailProfile?: (t: number) => number;
+  caudalPaddleProfile?: (t: number) => number;
+  ossifiedTailRods?: boolean;
+  diplodocidBifidSpines?: boolean;
   tailClub?: boolean;
   tailSpikes?: boolean;
   decorateExterior?: (ext: THREE.Group, headGroup: THREE.Group, mats: DinoMaterials, dino: Dinosaur) => void;
@@ -190,11 +193,12 @@ function assembleFromBlueprint(
     patternHex,
     mats.skinMat,
     {
-      slices: 84,
-      radialSegments: 36,
+      slices: 96,
+      radialSegments: 40,
       dorsalRidge: bp.dorsalRidge ?? 0.055,
-      skinFolds: 0.028,
+      skinFolds: 0.024,
       lateralKeel: bp.lateralKeel ?? 0.0,
+      shadingMode: 'body',
     }
   );
   exteriorGroup.add(bodyMesh);
@@ -274,11 +278,16 @@ function assembleFromBlueprint(
   // 2. MUSEUM-GRADE ARTICULATED SKELETON
   // =========================================================
   const vertebralColumn = createArticulatedVertebralColumn(bp.stations, mats.boneMat, {
-    vertebraCount: bp.vertebraCount ?? 40,
+    vertebraCount: bp.vertebraCount ?? 44,
     neuralSpineScale: bp.neuralSpineScale ?? 1.0,
     sailProfile: bp.sailProfile,
+    caudalPaddleProfile: bp.caudalPaddleProfile,
+    ossifiedTailRods: bp.ossifiedTailRods,
+    diplodocidBifidSpines: bp.diplodocidBifidSpines,
     tailClub: bp.tailClub,
     tailSpikes: bp.tailSpikes,
+    ribStartT: bp.ribStartT,
+    ribEndT: bp.ribEndT,
   });
   skeletonGroup.add(vertebralColumn);
 
@@ -397,15 +406,16 @@ function getTRexBlueprint(): AnatomicalDinoBlueprint {
       snoutDrop: 0.07,
       browCrest: 0.12,
       jawDepth: 0.30,
-      teethCount: 8,
+      teethCount: 9,
       toothLength: 0.085,
       nasalBoss: 0.05,
+      skullType: 'tyrannosaur',
     },
     slitPupil: true,
     isSaurischian: true,
     ribStartT: 0.46,
     ribEndT: 0.80,
-    ribPairs: 10,
+    ribPairs: 11,
     hasGastralia: true,
     hipPos: [0, 2.05, -0.45],
     shoulderPos: [0, 1.85, 1.05],
@@ -438,9 +448,10 @@ function getTRexBlueprint(): AnatomicalDinoBlueprint {
     },
     scuteCount: 28,
     scuteSize: 0.07,
-    vertebraCount: 42,
-    neuralSpineScale: 1.05,
+    vertebraCount: 46,
+    neuralSpineScale: 1.08,
     dorsalRidge: 0.065,
+    ossifiedTailRods: true,
   };
 }
 
@@ -477,15 +488,16 @@ function getBrachiosaurusBlueprint(): AnatomicalDinoBlueprint {
       snoutDrop: 0.14,
       browCrest: 0.04,
       jawDepth: 0.24,
-      teethCount: 5,
-      toothLength: 0.07,
+      teethCount: 6,
+      toothLength: 0.068,
       nasalBoss: 0.32, // Iconic high-vaulted Brachiosaurus nasal arch dome!
+      skullType: 'sauropod-arch',
     },
     slitPupil: false,
     isSaurischian: true,
     ribStartT: 0.34,
     ribEndT: 0.58,
-    ribPairs: 11,
+    ribPairs: 12,
     hasGastralia: false,
     hipPos: [0, 2.25, -0.75],
     shoulderPos: [0, 2.75, 0.95],
@@ -523,8 +535,8 @@ function getBrachiosaurusBlueprint(): AnatomicalDinoBlueprint {
     },
     scuteCount: 24,
     scuteSize: 0.06,
-    vertebraCount: 48,
-    neuralSpineScale: 0.85,
+    vertebraCount: 54,
+    neuralSpineScale: 0.88,
   };
 }
 
@@ -562,14 +574,15 @@ function getDiplodocusBlueprint(): AnatomicalDinoBlueprint {
       snoutDrop: 0.18,
       browCrest: 0.03,
       jawDepth: 0.18,
-      teethCount: 5,    // Anterior peg-like leaf-raking teeth
+      teethCount: 6,    // Anterior peg-like leaf-raking teeth
       toothLength: 0.055,
+      skullType: 'diplodocid',
     },
     slitPupil: false,
     isSaurischian: true,
     ribStartT: 0.46,
     ribEndT: 0.68,
-    ribPairs: 11,
+    ribPairs: 12,
     hasGastralia: false,
     hipPos: [0, 2.08, -0.75],
     shoulderPos: [0, 1.82, 0.95],
@@ -605,9 +618,10 @@ function getDiplodocusBlueprint(): AnatomicalDinoBlueprint {
     },
     scuteCount: 38,
     scuteSize: 0.085, // Prominent diplodocid dorsal dermal spines!
-    vertebraCount: 52,
+    vertebraCount: 58,
     neuralSpineScale: 1.15,
     dorsalRidge: 0.08,
+    diplodocidBifidSpines: true,
   };
 }
 
@@ -629,7 +643,7 @@ function getTriceratopsBlueprint(): AnatomicalDinoBlueprint {
     { pos: [0, 1.72, 1.42], rx: 0.52, ryTop: 0.48, ryBottom: 0.46 },
   ];
 
-  // Helper to construct the doubly-curved Parietal-Squamosal Frill & 3 Horns
+  // Helper to construct the doubly-curved Parietal-Squamosal Frill & 3 Horns with basal keratin collars
   const addCeratopsianCranialArmor = (
     targetHeadGroup: THREE.Group,
     frillMat: THREE.Material,
@@ -657,7 +671,6 @@ function getTriceratopsBlueprint(): AnatomicalDinoBlueprint {
 
         const x = Math.sin(u) * rX;
         const y = Math.cos(u) * rY;
-        // Saddle curvature: concave dish forward near rim, arched over neck midline
         const z = -Math.pow(v, 1.5) * 0.42 + Math.cos(u * 2) * 0.08 * v;
         fPos.push(x, y, z);
       }
@@ -670,7 +683,7 @@ function getTriceratopsBlueprint(): AnatomicalDinoBlueprint {
         const c = (iv + 1) * (uSegs + 1) + (iu + 1);
         const d = iv * (uSegs + 1) + (iu + 1);
         fIdx.push(a, b, d, b, c, d);
-        fIdx.push(a, d, b, b, d, c); // double-sided solid frill
+        fIdx.push(a, d, b, b, d, c);
       }
     }
 
@@ -685,7 +698,7 @@ function getTriceratopsBlueprint(): AnatomicalDinoBlueprint {
     // Epoccipital Marginal Scutes (15 triangular bone osteoderms scalloping the frill rim)
     const scuteCount = 15;
     for (let s = 0; s < scuteCount; s++) {
-      const u = ((s / (scuteCount - 1)) - 0.5) * Math.PI * 1.14;
+      const u = (s / (scuteCount - 1) - 0.5) * Math.PI * 1.14;
       const x = Math.sin(u) * frillRadiusX * 1.01;
       const y = Math.cos(u) * frillRadiusY * 1.01;
       const z = -0.42 + Math.cos(u * 2) * 0.08;
@@ -698,14 +711,25 @@ function getTriceratopsBlueprint(): AnatomicalDinoBlueprint {
 
     targetHeadGroup.add(frillGroup);
 
-    // 2. Two Long Forward-Curving Supraorbital Brow Horns
+    // 2. Two Long Forward-Curving Supraorbital Brow Horns + Basal Keratin Collars
     for (const side of [-1, 1]) {
       const hornLen = isSkeleton ? 1.08 : 1.22;
       const browHorn = createCurvedClawOrTooth(hornLen, 0.115, 0.36, hornMat);
       browHorn.position.set(side * 0.34, 0.42, 0.28);
-      browHorn.rotation.x = Math.PI * 0.36; // project forward and upward
+      browHorn.rotation.x = Math.PI * 0.36;
       browHorn.rotation.z = -side * 0.18;
       targetHeadGroup.add(browHorn);
+
+      if (!isSkeleton) {
+        const browCollar = new THREE.Mesh(
+          new THREE.TorusGeometry(0.115, 0.036, 8, 14),
+          frillMat
+        );
+        browCollar.position.set(side * 0.34, 0.42, 0.28);
+        browCollar.rotation.x = Math.PI * 0.36 + Math.PI / 2;
+        browCollar.rotation.y = -side * 0.18;
+        targetHeadGroup.add(browCollar);
+      }
 
       // Jugal cheek horn (epijugal spike)
       const cheekSpike = createCurvedClawOrTooth(0.24, 0.065, 0.15, hornMat);
@@ -714,11 +738,21 @@ function getTriceratopsBlueprint(): AnatomicalDinoBlueprint {
       targetHeadGroup.add(cheekSpike);
     }
 
-    // 3. Upward-Curving Nasal Horn over the Snout
+    // 3. Upward-Curving Nasal Horn over the Snout + Basal Keratin Collar
     const nasalHorn = createCurvedClawOrTooth(isSkeleton ? 0.36 : 0.44, 0.085, -0.28, hornMat);
     nasalHorn.position.set(0, 0.22, 0.84);
     nasalHorn.rotation.x = 0.28;
     targetHeadGroup.add(nasalHorn);
+
+    if (!isSkeleton) {
+      const nasalCollar = new THREE.Mesh(
+        new THREE.TorusGeometry(0.085, 0.028, 7, 12),
+        frillMat
+      );
+      nasalCollar.position.set(0, 0.22, 0.84);
+      nasalCollar.rotation.x = Math.PI / 2 + 0.28;
+      targetHeadGroup.add(nasalCollar);
+    }
   };
 
   return {
@@ -736,12 +770,13 @@ function getTriceratopsBlueprint(): AnatomicalDinoBlueprint {
       teethCount: 0,    // Shearing dental batteries hidden behind beak
       toothLength: 0,
       hasBeak: true,
+      skullType: 'ceratopsian',
     },
     slitPupil: false,
     isSaurischian: false,
     ribStartT: 0.45,
     ribEndT: 0.82,
-    ribPairs: 10,
+    ribPairs: 11,
     hasGastralia: false,
     hipPos: [0, 1.78, -0.55],
     shoulderPos: [0, 1.54, 0.98],
@@ -777,7 +812,7 @@ function getTriceratopsBlueprint(): AnatomicalDinoBlueprint {
     },
     scuteCount: 18,
     scuteSize: 0.06,
-    vertebraCount: 38,
+    vertebraCount: 42,
     neuralSpineScale: 0.95,
     decorateExterior: (_ext, headGroup, mats) => {
       addCeratopsianCranialArmor(headGroup, mats.detailMat, mats.hornMat, false);
@@ -832,36 +867,44 @@ function getStegosaurusBlueprint(): AnatomicalDinoBlueprint {
   const addStegoPlatesAndThagomizer = (
     targetGroup: THREE.Group,
     plateMat: THREE.Material,
-    spikeMat: THREE.Material
+    spikeMat: THREE.Material,
+    isSkeleton = false
   ) => {
     const plateGeo = createStegoPlateGeo();
     const pts = stations.map((s) => new THREE.Vector3(...s.pos));
     const curve = new THREE.CatmullRomCurve3(pts, false, 'centripetal', 0.5);
 
-    // 15 Alternating Double-Row Dorsal Plates from neck to tail
-    const plateCount = 15;
+    // 17 Alternating Double-Row Dorsal Plates from neck to tail ("Sophie" NHMUK PV R36730)
+    const plateCount = 17;
     for (let i = 0; i < plateCount; i++) {
       const frac = i / (plateCount - 1);
-      const t = THREE.MathUtils.lerp(0.16, 0.94, frac);
+      const t = THREE.MathUtils.lerp(0.15, 0.94, frac);
       const pos = curve.getPointAt(t);
       const tan = curve.getTangentAt(t).normalize();
 
-      // Largest plates over the pelvis/mid-back (frac ~ 0.45), smaller on neck and tail
-      const sizeScale = 0.28 + Math.pow(Math.sin(frac * Math.PI), 0.85) * 0.92;
+      const sizeScale = 0.26 + Math.pow(Math.sin(frac * Math.PI), 0.85) * 0.92;
       const side = i % 2 === 0 ? 1 : -1;
 
       const plate = new THREE.Mesh(plateGeo, plateMat);
       plate.scale.set(sizeScale, sizeScale, sizeScale);
 
-      // Estimate dorsal surface height at t
       const dorsalOffset = 0.22 + Math.sin(frac * Math.PI) * 0.42;
       plate.position.set(side * 0.14, pos.y + dorsalOffset + sizeScale * 0.32, pos.z);
 
-      // Pitch plate along spine normal and flare slightly outward
       plate.rotation.x = -tan.y * 0.85 - 0.12;
       plate.rotation.z = -side * 0.18;
       plate.castShadow = true;
       targetGroup.add(plate);
+
+      // Basal Dermal Collar at skin-to-plate contact point
+      if (!isSkeleton) {
+        const collarGeo = new THREE.CapsuleGeometry(0.045 * sizeScale, 0.38 * sizeScale, 4, 8);
+        collarGeo.rotateX(Math.PI / 2);
+        const collar = new THREE.Mesh(collarGeo, spikeMat);
+        collar.position.set(side * 0.12, pos.y + dorsalOffset + 0.02, pos.z);
+        collar.rotation.x = -tan.y * 0.85;
+        targetGroup.add(collar);
+      }
     }
 
     // 4-Spiked Caudal Thagomizer at end of tail
@@ -874,6 +917,13 @@ function getStegosaurusBlueprint(): AnatomicalDinoBlueprint {
         spike.rotation.z = -side * 1.08;
         spike.rotation.x = -0.38;
         targetGroup.add(spike);
+
+        if (!isSkeleton) {
+          const spikeCollar = new THREE.Mesh(new THREE.TorusGeometry(0.068, 0.022, 6, 10), plateMat);
+          spikeCollar.position.set(side * 0.08, pos.y + 0.04, pos.z);
+          spikeCollar.rotation.y = (side * Math.PI) / 2.2;
+          targetGroup.add(spikeCollar);
+        }
       }
     }
   };
@@ -893,12 +943,13 @@ function getStegosaurusBlueprint(): AnatomicalDinoBlueprint {
       teethCount: 0,
       toothLength: 0,
       hasBeak: true,
+      skullType: 'stegosaur',
     },
     slitPupil: false,
     isSaurischian: false,
     ribStartT: 0.42,
     ribEndT: 0.76,
-    ribPairs: 11,
+    ribPairs: 12,
     hasGastralia: false,
     hipPos: [0, 2.22, -0.50],
     shoulderPos: [0, 1.54, 1.12],
@@ -934,13 +985,13 @@ function getStegosaurusBlueprint(): AnatomicalDinoBlueprint {
       clawLength: 0.09,
       columnarPad: true,
     },
-    vertebraCount: 40,
-    neuralSpineScale: 0.9,
+    vertebraCount: 44,
+    neuralSpineScale: 0.92,
     decorateExterior: (ext, _headGroup, mats) => {
-      addStegoPlatesAndThagomizer(ext, mats.detailMat, mats.hornMat);
+      addStegoPlatesAndThagomizer(ext, mats.detailMat, mats.hornMat, false);
     },
     decorateSkeleton: (skel, _skelHead, mats) => {
-      addStegoPlatesAndThagomizer(skel, mats.boneMat, mats.boneMat);
+      addStegoPlatesAndThagomizer(skel, mats.boneMat, mats.boneMat, true);
     },
   };
 }
@@ -977,14 +1028,15 @@ function getVelociraptorBlueprint(): AnatomicalDinoBlueprint {
       snoutDrop: 0.02,
       browCrest: 0.07,  // Sharp raptor brow ridge over slit-pupil eyes
       jawDepth: 0.17,
-      teethCount: 8,
+      teethCount: 9,
       toothLength: 0.052,
+      skullType: 'dromaeosaur',
     },
     slitPupil: true,
     isSaurischian: true,
     ribStartT: 0.52,
     ribEndT: 0.80,
-    ribPairs: 9,
+    ribPairs: 10,
     hasGastralia: true,
     hipPos: [0, 1.40, -0.45],
     shoulderPos: [0, 1.32, 0.85],
@@ -1020,9 +1072,10 @@ function getVelociraptorBlueprint(): AnatomicalDinoBlueprint {
     },
     scuteCount: 26,
     scuteSize: 0.045,
-    vertebraCount: 40,
+    vertebraCount: 44,
     neuralSpineScale: 0.85,
     dorsalRidge: 0.04,
+    ossifiedTailRods: true,
   };
 }
 
@@ -1044,6 +1097,21 @@ function getAnkylosaurusBlueprint(): AnatomicalDinoBlueprint {
     { pos: [0, 1.08, 1.48], rx: 0.48, ryTop: 0.34, ryBottom: 0.34, pinchTop: 0.75 },
   ];
 
+  const addAnkyloCranialHorns = (targetHeadGroup: THREE.Group, hornMat: THREE.Material) => {
+    for (const side of [-1, 1]) {
+      const squamosalHorn = new THREE.Mesh(new THREE.ConeGeometry(0.09, 0.24, 4), hornMat);
+      squamosalHorn.position.set(side * 0.34, 0.22, 0.08);
+      squamosalHorn.rotation.z = -side * 0.85;
+      squamosalHorn.rotation.x = -0.45;
+
+      const jugalHorn = new THREE.Mesh(new THREE.ConeGeometry(0.085, 0.22, 4), hornMat);
+      jugalHorn.position.set(side * 0.38, -0.06, 0.14);
+      jugalHorn.rotation.z = -side * 1.35;
+
+      targetHeadGroup.add(squamosalHorn, jugalHorn);
+    }
+  };
+
   return {
     stations,
     headSpec: {
@@ -1059,12 +1127,13 @@ function getAnkylosaurusBlueprint(): AnatomicalDinoBlueprint {
       teethCount: 0,
       toothLength: 0,
       hasBeak: true,
+      skullType: 'ankylosaur',
     },
     slitPupil: false,
     isSaurischian: false,
     ribStartT: 0.42,
     ribEndT: 0.82,
-    ribPairs: 11,
+    ribPairs: 12,
     hasGastralia: false,
     hipPos: [0, 1.10, -0.50],
     shoulderPos: [0, 1.02, 0.98],
@@ -1100,7 +1169,8 @@ function getAnkylosaurusBlueprint(): AnatomicalDinoBlueprint {
     },
     lateralKeel: 0.14,
     tailClub: true,
-    vertebraCount: 36,
+    ossifiedTailRods: true,
+    vertebraCount: 40,
     decorateExterior: (ext, headGroup, mats) => {
       // 1. Transverse Rows of Keeled Oval Osteoderm Armor Plates across the Carapace
       const scuteGeo = new THREE.ConeGeometry(0.11, 0.14, 6);
@@ -1114,7 +1184,7 @@ function getAnkylosaurusBlueprint(): AnatomicalDinoBlueprint {
         const cols = isNeck ? 3 : 7;
 
         for (let c = 0; c < cols; c++) {
-          const u = (c / (cols - 1) - 0.5) * 2; // -1 to 1
+          const u = (c / (cols - 1) - 0.5) * 2;
           const x = u * maxW;
           const y = baseY - u * u * (isNeck ? 0.12 : 0.34);
 
@@ -1135,19 +1205,8 @@ function getAnkylosaurusBlueprint(): AnatomicalDinoBlueprint {
         }
       }
 
-      // 2. 4 Pyramidal Cranial Armor Horns (Squamosal upper + Quadratojugal cheek horns)
-      for (const side of [-1, 1]) {
-        const squamosalHorn = new THREE.Mesh(new THREE.ConeGeometry(0.09, 0.24, 4), mats.hornMat);
-        squamosalHorn.position.set(side * 0.34, 0.22, 0.08);
-        squamosalHorn.rotation.z = -side * 0.85;
-        squamosalHorn.rotation.x = -0.45;
-
-        const jugalHorn = new THREE.Mesh(new THREE.ConeGeometry(0.085, 0.22, 4), mats.hornMat);
-        jugalHorn.position.set(side * 0.38, -0.06, 0.14);
-        jugalHorn.rotation.z = -side * 1.35;
-
-        headGroup.add(squamosalHorn, jugalHorn);
-      }
+      // 2. 4 Pyramidal Cranial Armor Horns
+      addAnkyloCranialHorns(headGroup, mats.hornMat);
 
       // 3. Massive Fused Dual-Lobed Bone Tail Club at z = -2.95
       const clubGroup = new THREE.Group();
@@ -1164,6 +1223,16 @@ function getAnkylosaurusBlueprint(): AnatomicalDinoBlueprint {
       minorTip.position.set(0, 0, -0.26);
       clubGroup.add(minorTip);
       ext.add(clubGroup);
+    },
+    decorateSkeleton: (skel, skelHead, mats) => {
+      // Mount the 4 co-ossified cranial horns + 2 cervical half-ring bony yokes on the fossil skeleton (AMNH 5214)
+      addAnkyloCranialHorns(skelHead, mats.boneMat);
+      for (const z of [1.14, 1.36]) {
+        const yokeGeo = new THREE.TorusGeometry(0.42, 0.04, 6, 14, Math.PI);
+        const yoke = new THREE.Mesh(yokeGeo, mats.boneMat);
+        yoke.position.set(0, 1.06, z);
+        skel.add(yoke);
+      }
     },
   };
 }
@@ -1189,7 +1258,7 @@ function getSpinosaurusBlueprint(): AnatomicalDinoBlueprint {
     { pos: [0, 2.46, 1.92], rx: 0.30, ryTop: 0.30, ryBottom: 0.28 },
   ];
 
-  // Sail height profile along spine t in [0.44 .. 0.84]
+  // Sail height profile along dorsal spine t in [0.44 .. 0.84]
   const sailProfile = (t: number) => {
     if (t < 0.42 || t > 0.85) return 0;
     const u = (t - 0.42) / (0.85 - 0.42);
@@ -1197,6 +1266,13 @@ function getSpinosaurusBlueprint(): AnatomicalDinoBlueprint {
     const arch = Math.sin(u * Math.PI);
     const dip = 1.0 - 0.16 * Math.pow(Math.sin(u * Math.PI * 2), 2);
     return arch * dip * 1.48;
+  };
+
+  // Aquatic Paddle-Tail caudal neural spine profile along t in [0.04 .. 0.38] (Ibrahim et al. 2020, FSAC-KK 11888)
+  const caudalPaddleProfile = (t: number) => {
+    if (t < 0.03 || t > 0.38) return 0;
+    const u = (t - 0.03) / (0.38 - 0.03);
+    return Math.sin(u * Math.PI) * 0.46;
   };
 
   return {
@@ -1211,15 +1287,16 @@ function getSpinosaurusBlueprint(): AnatomicalDinoBlueprint {
       snoutDrop: 0.05,
       browCrest: 0.07,
       jawDepth: 0.20,
-      teethCount: 10,   // Interlocking conical fish-catching teeth
+      teethCount: 11,   // Interlocking conical fish-catching teeth
       toothLength: 0.085,
       nasalBoss: 0.14,  // Median nasal crest between the eyes
+      skullType: 'spinosaur',
     },
     slitPupil: true,
     isSaurischian: true,
     ribStartT: 0.48,
     ribEndT: 0.82,
-    ribPairs: 11,
+    ribPairs: 12,
     hasGastralia: true,
     hipPos: [0, 1.75, -0.45],
     shoulderPos: [0, 1.62, 1.12],
@@ -1253,8 +1330,9 @@ function getSpinosaurusBlueprint(): AnatomicalDinoBlueprint {
     },
     scuteCount: 20,
     scuteSize: 0.055,
-    vertebraCount: 44,
+    vertebraCount: 48,
     sailProfile,
+    caudalPaddleProfile,
     decorateExterior: (ext, _headGroup, mats) => {
       // Sculpted Living Dorsal Sail with Embossed Neural Spine Ridges underneath the skin!
       const sailGroup = new THREE.Group();
