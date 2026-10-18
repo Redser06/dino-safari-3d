@@ -6,6 +6,7 @@ import { DinoCard } from './components/DinoCard';
 import { DinoControls } from './components/DinoControls';
 import { DinoFacts } from './components/DinoFacts';
 import { FossilQuizModal } from './components/FossilQuizModal';
+import { CreditsPanel } from './components/CreditsPanel';
 import { audioService } from './services/audio';
 import { Volume2, VolumeX, Sparkles, HelpCircle, ChevronLeft, ChevronRight } from 'lucide-react';
 
@@ -14,6 +15,7 @@ export const App: React.FC = () => {
   const [viewMode, setViewMode] = useState<DinoViewMode>('exterior');
   const [isMuted, setIsMuted] = useState(false);
   const [isQuizOpen, setIsQuizOpen] = useState(false);
+  const [creditsOpen, setCreditsOpen] = useState(false);
 
   const handleSelectDino = (dino: Dinosaur) => {
     setSelectedDino(dino);
@@ -147,6 +149,7 @@ export const App: React.FC = () => {
               <ThreeDinoViewer
                 dinosaur={selectedDino}
                 viewMode={viewMode}
+                onOpenCredits={() => setCreditsOpen(true)}
               />
             </div>
 
@@ -171,11 +174,15 @@ export const App: React.FC = () => {
           <div className="flex items-center gap-2">
             <span>🦕 Dino Safari 3D</span>
             <span>•</span>
-            <span>Built for Young Explorers (Ages 4-6)</span>
+            <span>Built for little explorers</span>
           </div>
-          <div className="text-safari-700">
-            Classic Reptilian Anatomy • 3D Interactive Skeletons & Exterior
-          </div>
+          <button
+            type="button"
+            onClick={() => setCreditsOpen(true)}
+            className="underline font-extrabold text-safari-900"
+          >
+            Model credits
+          </button>
         </div>
       </footer>
 
@@ -185,6 +192,7 @@ export const App: React.FC = () => {
         onClose={() => setIsQuizOpen(false)}
         onSelectDinoFromQuiz={handleSelectFromQuiz}
       />
+      <CreditsPanel open={creditsOpen} onClose={() => setCreditsOpen(false)} />
     </div>
   );
 };

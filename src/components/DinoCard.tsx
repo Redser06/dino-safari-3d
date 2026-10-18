@@ -39,7 +39,7 @@ export const DinoCard: React.FC<DinoCardProps> = ({ dino, isSelected, onSelect }
         {dino.id === 'diplodocus' && '🦕'}
         {dino.id === 'triceratops' && '🦏'}
         {dino.id === 'stegosaurus' && '🦎'}
-        {dino.id === 'velociraptor' && '🐊'}
+        {dino.id === 'iguanodon' && '🦕'}
         {dino.id === 'ankylosaurus' && '🛡️'}
         {dino.id === 'spinosaurus' && '🐊'}
       </div>

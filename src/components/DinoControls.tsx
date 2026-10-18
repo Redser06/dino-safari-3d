@@ -34,33 +34,47 @@ export const DinoControls: React.FC<DinoControlsProps> = ({
       <div className="bg-white p-2 sm:p-2.5 rounded-3xl border-3 border-safari-300 shadow-playful flex flex-col sm:flex-row items-center justify-between gap-2">
         <div className="text-xs sm:text-sm font-bold text-safari-800 px-2 flex items-center gap-1.5 self-start sm:self-center">
           <Sparkles className="w-4 h-4 text-amber-500" />
-          <span>3D Anatomy Mode:</span>
+          <span id="anatomy-mode-label">Skin or skeleton:</span>
         </div>
 
-        <div className="grid grid-cols-2 gap-2 w-full sm:w-auto">
-          {/* Exterior Mode */}
+        <div
+          className="grid grid-cols-2 gap-2 w-full sm:w-auto"
+          role="group"
+          aria-labelledby="anatomy-mode-label"
+          onKeyDown={(event) => {
+            if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+              event.preventDefault();
+              handleModeChange(viewMode === 'exterior' ? 'skeleton' : 'exterior');
+            }
+          }}
+        >
           <button
+            type="button"
             onClick={() => handleModeChange('exterior')}
+            aria-pressed={viewMode === 'exterior'}
+            aria-label="Show living skin"
             className={`btn-chunky flex items-center justify-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 rounded-2xl text-xs sm:text-sm font-extrabold border-2 ${
               viewMode === 'exterior'
                 ? 'bg-jungle-600 text-white border-jungle-800 shadow-playful-sm scale-[1.02]'
                 : 'bg-safari-100 text-safari-800 border-safari-300 hover:bg-safari-200'
             }`}
           >
-            <span className="text-base sm:text-lg">🦖</span>
-            <span>Living Reptilian Skin</span>
+            <span className="text-base sm:text-lg" aria-hidden="true">🦖</span>
+            <span>Living Skin</span>
           </button>
 
-          {/* Skeleton Mode */}
           <button
+            type="button"
             onClick={() => handleModeChange('skeleton')}
+            aria-pressed={viewMode === 'skeleton'}
+            aria-label="Show fossil skeleton"
             className={`btn-chunky flex items-center justify-center gap-2 px-4 sm:px-6 py-2.5 sm:py-3 rounded-2xl text-xs sm:text-sm font-extrabold border-2 ${
               viewMode === 'skeleton'
                 ? 'bg-amber-500 text-white border-amber-700 shadow-playful-sm scale-[1.02]'
                 : 'bg-bone-100 text-amber-900 border-bone-300 hover:bg-bone-200'
             }`}
           >
-            <span className="text-base sm:text-lg">🦴</span>
+            <span className="text-base sm:text-lg" aria-hidden="true">🦴</span>
             <span>Fossil Skeleton</span>
           </button>
         </div>

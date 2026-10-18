@@ -34,7 +34,6 @@ export interface HeadSpec {
     | 'diplodocid'
     | 'ceratopsian'
     | 'stegosaur'
-    | 'dromaeosaur'
     | 'ankylosaur'
     | 'spinosaur';
 }
@@ -1118,7 +1117,7 @@ export function createArticulatedVertebralColumn(
       }
     }
 
-    // 6. Ossified Prezygapophyseal Tendon Bundle (Velociraptor & Ankylosaurus stiffened tail)
+    // 6. Ossified tendon rods along a stiffened tail (Ankylosaurus)
     if (options?.ossifiedTailRods && isCaudal && t < 0.36) {
       for (const side of [-1, 1]) {
         const rodGeo = new THREE.CylinderGeometry(0.009, 0.009, segLen * 1.65, 5);
@@ -1603,10 +1602,6 @@ export function createSkeletalSkull(
     // Spinosaurus (MSNM V4047): long low crocodile rostrum with median nasal crest, sub-narial notch, and terminal rosette
     craniumShape.quadraticCurveTo(0.26 * L, 0.44 * H, 0.44 * L, H * (0.42 + (spec.nasalBoss ?? 0.14)));
     craniumShape.quadraticCurveTo(0.72 * L, 0.24 * H - drop * 0.3, 0.97 * L, 0.14 * H - drop * 0.75);
-  } else if (skullType === 'dromaeosaur') {
-    // Velociraptor (IGM 100/976): concave upturned dorsal snout profile
-    craniumShape.quadraticCurveTo(0.28 * L, 0.46 * H, 0.56 * L, 0.28 * H);
-    craniumShape.quadraticCurveTo(0.80 * L, 0.22 * H, 0.96 * L, 0.14 * H - drop * 0.7);
   } else {
     craniumShape.quadraticCurveTo(
       0.25 * L,
@@ -1743,8 +1738,8 @@ export function createSkeletalSkull(
     sideJaw.castShadow = true;
     skullGroup.add(sideJaw);
 
-    // Bony Sclerotic Ring inside the orbit (preserved in Velociraptor, Stegosaurus, Sauropods)
-    if (skullType === 'dromaeosaur' || skullType === 'stegosaur' || skullType === 'diplodocid') {
+    // Bony sclerotic ring inside the orbit (known in Stegosaurus and some sauropods)
+    if (skullType === 'stegosaur' || skullType === 'diplodocid') {
       const scleroticGeo = new THREE.TorusGeometry(0.055 * H, 0.012 * H, 6, 12);
       scleroticGeo.rotateY(Math.PI / 2);
       const sclerotic = new THREE.Mesh(scleroticGeo, boneMat);

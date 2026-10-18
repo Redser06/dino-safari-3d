@@ -374,3 +374,23 @@ export function getFossilBoneTextures(): { albedo: THREE.CanvasTexture; bump: TH
 
   return { albedo: cachedBoneAlbedo, bump: cachedBoneBump };
 }
+
+/** Drop cached skin and bone textures after a model that used them is disposed. */
+export function releaseSharedDinoTextures() {
+  const textures: THREE.Texture[] = [];
+  if (cachedSkinMaps) {
+    textures.push(cachedSkinMaps.normalMap, cachedSkinMaps.bumpMap, cachedSkinMaps.roughnessMap);
+    cachedSkinMaps = null;
+  }
+  if (cachedBoneAlbedo) {
+    textures.push(cachedBoneAlbedo);
+    cachedBoneAlbedo = null;
+  }
+  if (cachedBoneBump) {
+    textures.push(cachedBoneBump);
+    cachedBoneBump = null;
+  }
+  for (const texture of albedoCache.values()) textures.push(texture);
+  albedoCache.clear();
+  for (const texture of textures) texture.dispose();
+}

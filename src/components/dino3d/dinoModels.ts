@@ -30,6 +30,8 @@ export interface DinoModelResult {
   chestMesh: THREE.Mesh | null;
   jawMesh: THREE.Object3D | null;
   neckMesh: THREE.Object3D | null;
+  mixer: THREE.AnimationMixer | null;
+  clips: THREE.AnimationClip[];
 }
 
 export function createDinoMaterials(dino: Dinosaur): DinoMaterials {
@@ -342,6 +344,8 @@ function assembleFromBlueprint(
     chestMesh: bodyMesh,
     jawMesh: jawGroup,
     neckMesh: headGroup,
+    mixer: null,
+    clips: [],
   };
 }
 
@@ -363,8 +367,8 @@ export function buildDinosaur3D(dino: Dinosaur): DinoModelResult {
       return assembleFromBlueprint(dino, getTriceratopsBlueprint(), mats);
     case 'stegosaurus':
       return assembleFromBlueprint(dino, getStegosaurusBlueprint(), mats);
-    case 'velociraptor':
-      return assembleFromBlueprint(dino, getVelociraptorBlueprint(), mats);
+    case 'iguanodon':
+      return assembleFromBlueprint(dino, getIguanodonBlueprint(), mats);
     case 'ankylosaurus':
       return assembleFromBlueprint(dino, getAnkylosaurusBlueprint(), mats);
     case 'spinosaurus':
@@ -997,85 +1001,104 @@ function getStegosaurusBlueprint(): AnatomicalDinoBlueprint {
 }
 
 // ----------------------------------------------------------------------------
-// 6. VELOCIRAPTOR — Sleek Reptilian Dromaeosaur Pack Hunter (No Feathers!)
+// 6. IGUANODON — Gentle ornithopod with a beak and a thumb spike
 // ----------------------------------------------------------------------------
-function getVelociraptorBlueprint(): AnatomicalDinoBlueprint {
+function getIguanodonBlueprint(): AnatomicalDinoBlueprint {
   const stations: BodyStation[] = [
-    // Stiffened Rod-Like Balance Tail
-    { pos: [0, 1.46, -3.3], rx: 0.025, ryTop: 0.03, ryBottom: 0.025 },
-    { pos: [0, 1.44, -2.4], rx: 0.07, ryTop: 0.08, ryBottom: 0.07 },
-    { pos: [0, 1.42, -1.4], rx: 0.14, ryTop: 0.15, ryBottom: 0.14 },
-    // Agile Pelvis
-    { pos: [0, 1.42, -0.45], rx: 0.32, ryTop: 0.30, ryBottom: 0.32, pinchTop: 1.3 },
-    // Lean Athletic Ribcage
-    { pos: [0, 1.38, 0.28], rx: 0.36, ryTop: 0.32, ryBottom: 0.38, pinchTop: 1.25 },
-    // Pectoral Shoulders
-    { pos: [0, 1.46, 0.85], rx: 0.30, ryTop: 0.28, ryBottom: 0.30 },
-    // S-Curved Predatory Neck
-    { pos: [0, 1.78, 1.18], rx: 0.21, ryTop: 0.22, ryBottom: 0.20 },
-    { pos: [0, 2.08, 1.36], rx: 0.18, ryTop: 0.18, ryBottom: 0.17 },
+    // Deep balancing tail, held out behind the hips
+    { pos: [0, 1.32, -3.7], rx: 0.045, ryTop: 0.05, ryBottom: 0.04 },
+    { pos: [0, 1.38, -2.7], rx: 0.11, ryTop: 0.13, ryBottom: 0.11 },
+    { pos: [0, 1.48, -1.7], rx: 0.2, ryTop: 0.22, ryBottom: 0.2 },
+    // Ornithischian hips
+    { pos: [0, 1.62, -0.5], rx: 0.42, ryTop: 0.36, ryBottom: 0.42, pinchTop: 1.18 },
+    // Rounded plant-eater belly
+    { pos: [0, 1.58, 0.4], rx: 0.52, ryTop: 0.4, ryBottom: 0.52, pinchTop: 1.12 },
+    // Shoulders a little lower than the hips
+    { pos: [0, 1.5, 1.2], rx: 0.38, ryTop: 0.32, ryBottom: 0.38 },
+    // Gentle neck reaching forward
+    { pos: [0, 1.68, 1.72], rx: 0.24, ryTop: 0.22, ryBottom: 0.22 },
+    { pos: [0, 1.9, 2.05], rx: 0.18, ryTop: 0.18, ryBottom: 0.16 },
   ];
+
+  const addThumbSpikes = (target: THREE.Group, mat: THREE.Material) => {
+    for (const side of [-1, 1]) {
+      const spike = new THREE.Mesh(new THREE.ConeGeometry(0.055, 0.36, 7), mat);
+      spike.position.set(side * 0.46, 0.36, 1.7);
+      spike.rotation.z = side * 0.28;
+      spike.castShadow = true;
+      const collar = new THREE.Mesh(new THREE.TorusGeometry(0.06, 0.018, 6, 10), mat);
+      collar.position.set(side * 0.46, 0.18, 1.7);
+      collar.rotation.x = Math.PI / 2;
+      target.add(spike, collar);
+    }
+  };
 
   return {
     stations,
     headSpec: {
-      attachPos: [0, 2.04, 1.30],
-      pitch: 0.12,
-      length: 0.68,
-      width: 0.32,
-      height: 0.30,
-      snoutTaper: 0.32, // Long, low, narrow upturned dromaeosaurid snout
-      snoutDrop: 0.02,
-      browCrest: 0.07,  // Sharp raptor brow ridge over slit-pupil eyes
-      jawDepth: 0.17,
-      teethCount: 9,
-      toothLength: 0.052,
-      skullType: 'dromaeosaur',
+      attachPos: [0, 1.88, 2.0],
+      pitch: 0.08,
+      length: 0.7,
+      width: 0.36,
+      height: 0.34,
+      snoutTaper: 0.4,
+      snoutDrop: 0.16,
+      browCrest: 0.03,
+      jawDepth: 0.16,
+      teethCount: 0,
+      toothLength: 0,
+      hasBeak: true,
+      skullType: 'stegosaur',
     },
-    slitPupil: true,
-    isSaurischian: true,
-    ribStartT: 0.52,
-    ribEndT: 0.80,
-    ribPairs: 10,
-    hasGastralia: true,
-    hipPos: [0, 1.40, -0.45],
-    shoulderPos: [0, 1.32, 0.85],
-    pelvisWidth: 0.34,
-    pelvisScale: 0.65,
-    shoulderWidth: 0.32,
-    shoulderScale: 0.62,
-    // Long Sprint Hindlimbs with Hyper-Extended Digit II Sickle Claw!
+    slitPupil: false,
+    isSaurischian: false,
+    ribStartT: 0.42,
+    ribEndT: 0.78,
+    ribPairs: 12,
+    hasGastralia: false,
+    hipPos: [0, 1.58, -0.5],
+    shoulderPos: [0, 1.42, 1.18],
+    pelvisWidth: 0.62,
+    pelvisScale: 1.0,
+    shoulderWidth: 0.52,
+    shoulderScale: 0.82,
+    // Longer hind legs, so it can rise up onto two feet
     hindLimbJoints: [
-      { pos: [0.28, 1.38, -0.45], rx: 0.24, rz: 0.30 },
-      { pos: [0.30, 0.92, -0.10], rx: 0.16, rz: 0.20 },
-      { pos: [0.28, 0.46, -0.36], rx: 0.10, rz: 0.12 },
-      { pos: [0.28, 0.09, -0.05], rx: 0.09, rz: 0.11 },
+      { pos: [0.42, 1.56, -0.48], rx: 0.28, rz: 0.32 },
+      { pos: [0.44, 0.95, -0.22], rx: 0.18, rz: 0.22 },
+      { pos: [0.42, 0.42, -0.32], rx: 0.13, rz: 0.15 },
+      { pos: [0.42, 0.1, -0.12], rx: 0.15, rz: 0.17 },
     ],
     hindLimbOptions: {
       toes: 3,
-      footLength: 0.42,
-      footWidth: 0.26,
-      clawLength: 0.13,
-      sickleClaw: true, // Iconic curved raptor switchblade claw held high!
+      footLength: 0.4,
+      footWidth: 0.3,
+      clawLength: 0.08,
+      columnarPad: true,
     },
-    // Long Grasping 3-Fingered Raptorial Arms
+    // Shorter arms that can rest on the ground, with a thumb spike added above
     foreLimbJoints: [
-      { pos: [0.28, 1.28, 0.85], rx: 0.11, rz: 0.13 },
-      { pos: [0.32, 0.94, 0.72], rx: 0.08, rz: 0.09 },
-      { pos: [0.30, 0.78, 1.05], rx: 0.06, rz: 0.07 },
+      { pos: [0.4, 1.4, 1.16], rx: 0.18, rz: 0.2 },
+      { pos: [0.44, 0.9, 1.38], rx: 0.13, rz: 0.14 },
+      { pos: [0.42, 0.42, 1.58], rx: 0.11, rz: 0.12 },
+      { pos: [0.42, 0.1, 1.68], rx: 0.12, rz: 0.14 },
     ],
     foreLimbOptions: {
-      toes: 3,
-      footLength: 0.26,
-      footWidth: 0.16,
-      clawLength: 0.11,
+      toes: 4,
+      footLength: 0.28,
+      footWidth: 0.22,
+      clawLength: 0.06,
+      columnarPad: true,
     },
-    scuteCount: 26,
-    scuteSize: 0.045,
-    vertebraCount: 44,
-    neuralSpineScale: 0.85,
-    dorsalRidge: 0.04,
-    ossifiedTailRods: true,
+    vertebraCount: 42,
+    neuralSpineScale: 0.8,
+    dorsalRidge: 0.03,
+    decorateExterior: (ext, _headGroup, mats) => {
+      addThumbSpikes(ext, mats.hornMat);
+    },
+    decorateSkeleton: (skel, _skelHead, mats) => {
+      addThumbSpikes(skel, mats.boneMat);
+    },
   };
 }
 

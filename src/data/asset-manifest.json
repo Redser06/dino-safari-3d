@@ -1,0 +1,22 @@
+{
+  "assets": [
+    {
+      "id": "triceratops-skin",
+      "file": "models/triceratops-skin.glb",
+      "size": 164660,
+      "licence": "CC0 1.0",
+      "author": "Gobkit",
+      "sourceUrl": "https://gobkit.com/freebies/dino/Triceratops.glb",
+      "note": "Rigged low-poly living Triceratops from the Gobkit Free Dinosaur Pack, with named idle and walk clips. CC0 1.0."
+    },
+    {
+      "id": "triceratops-skeleton",
+      "file": "models/triceratops-skeleton.glb",
+      "size": 1340920,
+      "licence": "CC0 1.0",
+      "author": "Smithsonian Institution, National Museum of Natural History",
+      "sourceUrl": "https://www.si.edu/object/3d/d8c623be-4ebc-11ea-b77f-2e728ce88125",
+      "note": "Low-resolution Draco-compressed GLB of the mounted Triceratops horridus skeleton (collected by John Bell Hatcher, 1890). Smithsonian Open Access, CC0 1.0."
+    }
+  ]
+}

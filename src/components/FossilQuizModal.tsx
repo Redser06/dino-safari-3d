@@ -39,7 +39,7 @@ const QUIZ_QUESTIONS: QuizQuestion[] = [
     emoji: '💥',
     correctDinoId: 't-rex',
     options: [
-      { dinoId: 'velociraptor', label: 'Velociraptor', icon: '🐊' },
+      { dinoId: 'iguanodon', label: 'Iguanodon', icon: '🦕' },
       { dinoId: 't-rex', label: 'Tyrannosaurus Rex', icon: '🦖' },
       { dinoId: 'diplodocus', label: 'Diplodocus', icon: '🦕' },
     ],
@@ -77,7 +77,7 @@ const QUIZ_QUESTIONS: QuizQuestion[] = [
     options: [
       { dinoId: 'stegosaurus', label: 'Stegosaurus', icon: '🦎' },
       { dinoId: 't-rex', label: 'T-Rex', icon: '🦖' },
-      { dinoId: 'velociraptor', label: 'Velociraptor', icon: '🐊' },
+      { dinoId: 'iguanodon', label: 'Iguanodon', icon: '🦕' },
     ],
   },
 ];

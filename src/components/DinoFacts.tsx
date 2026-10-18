@@ -31,7 +31,7 @@ export const DinoFacts: React.FC<DinoFactsProps> = ({ dino }) => {
 
           <div className="flex items-center gap-1 text-xs font-bold text-safari-800">
             <Compass className="w-4 h-4 text-safari-500" />
-            <span>Classic Reptilian Build</span>
+            <span>{dino.lengthMeters} m long</span>
           </div>
         </div>
 
@@ -49,6 +49,9 @@ export const DinoFacts: React.FC<DinoFactsProps> = ({ dino }) => {
 
         <p className="text-xs sm:text-sm text-safari-800/80 font-bold mt-2 italic">
           Name Meaning: &ldquo;{dino.meaning}&rdquo;
+        </p>
+        <p className="text-sm font-bold text-safari-900 mt-3 bg-safari-50 border border-safari-200 rounded-xl px-3 py-2 leading-relaxed">
+          {dino.skinNote}
         </p>
       </div>
 
@@ -128,7 +131,7 @@ export const DinoFacts: React.FC<DinoFactsProps> = ({ dino }) => {
               {dino.weightTons} T
             </div>
             <div className="text-[11px] text-safari-700 font-semibold">
-              {dino.weightTons >= 1 ? `${dino.weightTons * 1000} kg` : '20 kg'}
+              {Math.round(dino.weightTons * 1000)} kg
             </div>
           </div>
         </div>
