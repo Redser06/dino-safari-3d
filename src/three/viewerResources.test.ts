@@ -5,6 +5,7 @@ import { disposeObject3D, teardownViewer } from './disposeResources';
 import { applyAutoRotate } from './autoRotate';
 import { createDinosaurGltfLoader, DRACO_DECODER_PATH, KTX2_TRANSCODER_PATH } from './createGltfLoader';
 import { playNamedClip } from './playClip';
+import { loadTriceratops, SKELETON_X_ROTATION, TARGET_LENGTH } from './loadTriceratops';
 
 describe('disposeObject3D', () => {
   it('disposes geometries, materials, and textures', () => {
@@ -155,5 +156,43 @@ describe('asset manifest and model files', () => {
 
     const skeleton = readJson('public/models/triceratops-skeleton.glb');
     expect(skeleton.extensionsRequired ?? []).toContain('KHR_draco_mesh_compression');
+  });
+});
+
+describe('loadTriceratops skeleton orientation', () => {
+  it('stands the loaded skeleton upright, longer horizontally than it is tall', async () => {
+    // glTF POSITION min/max is the decoded mesh bounds. This file is one mesh with no node transform.
+    const data = readFileSync('public/models/triceratops-skeleton.glb');
+    const chunkLength = data.readUInt32LE(12);
+    const json = JSON.parse(data.subarray(20, 20 + chunkLength).toString('utf8')) as {
+      accessors: Array<{ type?: string; min?: number[]; max?: number[] }>;
+    };
+    const position = json.accessors.find((accessor) => accessor.type === 'VEC3' && accessor.min && accessor.max);
+    if (!position?.min || !position.max) throw new Error('Skeleton POSITION bounds are missing');
+
+    const [minX, minY, minZ] = position.min;
+    const [maxX, maxY, maxZ] = position.max;
+    const raw = new THREE.Vector3(maxX - minX, maxY - minY, maxZ - minZ);
+    expect(raw.y).toBeGreaterThan(Math.max(raw.x, raw.z));
+
+    const geometry = new THREE.BoxGeometry(raw.x, raw.y, raw.z);
+    geometry.translate((minX + maxX) / 2, (minY + maxY) / 2, (minZ + maxZ) / 2);
+    const skeleton = new THREE.Mesh(geometry);
+    const skin = new THREE.Group();
+    const loader = {
+      loadAsync: async (url: string) => {
+        if (url.includes('skeleton')) return { scene: skeleton, animations: [] };
+        return { scene: skin, animations: [] };
+      },
+    };
+
+    const model = await loadTriceratops(loader as unknown as Parameters<typeof loadTriceratops>[0]);
+    model.skeletonGroup.updateWorldMatrix(true, true);
+    const size = new THREE.Box3().setFromObject(model.skeletonGroup).getSize(new THREE.Vector3());
+    const horizontal = Math.max(size.x, size.z);
+
+    expect(skeleton.rotation.x).toBeCloseTo(SKELETON_X_ROTATION, 5);
+    expect(horizontal).toBeGreaterThan(size.y);
+    expect(horizontal).toBeCloseTo(TARGET_LENGTH, 2);
   });
 });

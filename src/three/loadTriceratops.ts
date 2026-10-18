@@ -3,7 +3,13 @@ import type { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import type { DinoModelResult } from '../components/dino3d/dinoModels';
 import assetManifest from '../data/asset-manifest.json';
 
-const TARGET_LENGTH = 4.4;
+export const TARGET_LENGTH = 4.4;
+
+/**
+ * Smithsonian Voyager stores this scan Z-up. A −90° turn about X lays the
+ * body along the ground before we measure it. Y stays up in the scene.
+ */
+export const SKELETON_X_ROTATION = -Math.PI / 2;
 
 function seatOnPedestal(root: THREE.Object3D, targetLength: number) {
   root.traverse((obj) => {
@@ -17,6 +23,7 @@ function seatOnPedestal(root: THREE.Object3D, targetLength: number) {
   root.updateMatrixWorld(true);
   const box = new THREE.Box3().setFromObject(root);
   const size = box.getSize(new THREE.Vector3());
+  // After the skeleton is turned upright, length runs along X or Z, not Y.
   const length = Math.max(size.x, size.z, 0.001);
   root.scale.multiplyScalar(targetLength / length);
 
@@ -50,6 +57,7 @@ export async function loadTriceratops(loader: GLTFLoader): Promise<DinoModelResu
   rootGroup.add(exteriorGroup, skeletonGroup);
 
   seatOnPedestal(skinGltf.scene, TARGET_LENGTH);
+  skeletonGltf.scene.rotation.x = SKELETON_X_ROTATION;
   seatOnPedestal(skeletonGltf.scene, TARGET_LENGTH);
   exteriorGroup.add(skinGltf.scene);
   skeletonGroup.add(skeletonGltf.scene);
